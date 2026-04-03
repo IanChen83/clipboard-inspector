@@ -1,0 +1,5 @@
+{
+  "name": "Clipboard Inspector",
+  "description": "Inspect clipboard contents including HTML, XML, and JSON with an expandable tree viewer.",
+  "requestFramePermissions": ["clipboard-read", "clipboard-write"]
+}
