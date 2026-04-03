@@ -4,6 +4,8 @@ import { ClipboardItemView } from './components/ClipboardItemView';
 import { Card, CardContent } from './components/ui/card';
 import { Badge } from './components/ui/badge';
 import { Button } from './components/ui/button';
+import { Switch } from './components/ui/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from './components/ui/tooltip';
 
 interface ParsedItem {
   id: string;
@@ -24,8 +26,9 @@ export default function App() {
   const [events, setEvents] = useState<ClipboardEventData[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('');
+  const [isHistoryEnabled, setIsHistoryEnabled] = useState(true);
 
-  const processDataTransfer = async (
+  const processDataTransfer = useCallback(async (
     dt: DataTransfer | null,
     source: 'paste' | 'drop'
   ) => {
@@ -73,22 +76,22 @@ export default function App() {
     newEvent.items = processedItems;
 
     setEvents((prev) => {
-      const newEvents = [newEvent, ...prev];
+      const newEvents = isHistoryEnabled ? [newEvent, ...prev] : [newEvent];
       setActiveTab(newEvent.id);
       return newEvents;
     });
-  };
+  }, [isHistoryEnabled]);
 
   const handlePaste = useCallback((e: ClipboardEvent) => {
     e.preventDefault();
     processDataTransfer(e.clipboardData, 'paste');
-  }, []);
+  }, [processDataTransfer]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     processDataTransfer(e.dataTransfer, 'drop');
-  }, []);
+  }, [processDataTransfer]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -106,6 +109,20 @@ export default function App() {
       document.removeEventListener('paste', handlePaste);
     };
   }, [handlePaste]);
+
+  const handleToggleHistory = (enabled: boolean) => {
+    setIsHistoryEnabled(enabled);
+    if (!enabled) {
+      setEvents((prev) => {
+        if (prev.length > 1) {
+          const newEvents = [prev[0]];
+          setActiveTab(newEvents[0].id);
+          return newEvents;
+        }
+        return prev;
+      });
+    }
+  };
 
   const clearEvents = () => {
     setEvents([]);
@@ -154,14 +171,6 @@ export default function App() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold">Clipboard Inspector</h1>
           </div>
-          <div className="flex gap-3">
-            {events.length > 0 && (
-              <Button variant="outline" onClick={clearEvents} className="gap-2">
-                <Trash2 size={16} />
-                Clear History
-              </Button>
-            )}
-          </div>
         </div>
       </header>
 
@@ -176,7 +185,31 @@ export default function App() {
         ) : (
           <div className="flex flex-col md:flex-row gap-6">
             <div className="w-full md:w-64 shrink-0">
-              <h3 className="font-semibold mb-4 text-sm text-muted-foreground uppercase tracking-wider">History</h3>
+              <div className="flex items-center mb-2 mt-2 gap-2">
+                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider flex-1">History</h3>
+                <Tooltip>
+                  <TooltipTrigger render={<div />}>
+                    <Switch 
+                      checked={isHistoryEnabled} 
+                      onCheckedChange={handleToggleHistory} 
+                      aria-label="Toggle history"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{isHistoryEnabled ? "History is enabled" : "History is disabled"}</p>
+                  </TooltipContent>
+                </Tooltip>
+                {events.length > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={clearEvents} className="h-6 w-6" />}>
+                      <Trash2 size={14} />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Clear History</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
               <div className="flex flex-col gap-2">
                 {events.map((event, index) => (
                   <button
