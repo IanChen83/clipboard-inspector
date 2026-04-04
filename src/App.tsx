@@ -150,7 +150,7 @@ export default function App() {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-background text-foreground font-sans flex flex-col relative"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -176,9 +176,9 @@ export default function App() {
             <p className="text-center max-w-md mb-6">
               Paste with <kbd className="px-2 py-1 bg-muted border rounded text-xs font-mono text-foreground">Ctrl+V</kbd> / <kbd className="px-2 py-1 bg-muted border rounded text-xs font-mono text-foreground">⌘V</kbd>, or drop files to inspect the contents.
             </p>
-            <Input 
-              type="text" 
-              placeholder="Or tap here to paste on mobile..." 
+            <Input
+              type="text"
+              placeholder="Tap here to paste on mobile"
               className="max-w-xs text-center"
               value=""
               onChange={() => {}}
@@ -188,19 +188,21 @@ export default function App() {
           <div className="flex flex-col md:flex-row gap-6">
             <div className="w-full md:w-64 shrink-0">
               <div className="flex items-center mb-2 mt-2 gap-2">
-                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider flex-1">History</h3>
-                <Tooltip>
-                  <TooltipTrigger render={<div />}>
-                    <Switch 
-                      checked={isHistoryEnabled} 
-                      onCheckedChange={handleToggleHistory} 
-                      aria-label="Toggle history"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{isHistoryEnabled ? "History is enabled" : "History is disabled"}</p>
-                  </TooltipContent>
-                </Tooltip>
+                <div className="flex gap-2 flex-1">
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">History</h3>
+                  <Tooltip>
+                    <TooltipTrigger style={{ lineHeight: 1 }} render={<div />}>
+                      <Switch
+                        checked={isHistoryEnabled}
+                        onCheckedChange={handleToggleHistory}
+                        aria-label="Toggle history"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{isHistoryEnabled ? "History is enabled" : "History is disabled"}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
                 {events.length > 0 && (
                   <Tooltip>
                     <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={clearEvents} className="h-6 w-6" />}>
@@ -218,8 +220,8 @@ export default function App() {
                     key={event.id}
                     onClick={() => setActiveTab(event.id)}
                     className={`text-left px-4 py-3 rounded-lg border transition-colors ${
-                      activeTab === event.id 
-                        ? 'bg-primary/10 border-primary shadow-sm' 
+                      activeTab === event.id
+                        ? 'bg-primary/10 border-primary shadow-sm'
                         : 'bg-card border-border hover:bg-accent'
                     }`}
                   >
@@ -229,8 +231,8 @@ export default function App() {
                         <Badge variant="secondary" className="text-[10px] px-1.5 py-0 uppercase">
                           {event.source}
                         </Badge>
-                        <div 
-                          onClick={(e) => removeEvent(e, event.id)} 
+                        <div
+                          onClick={(e) => removeEvent(e, event.id)}
                           className="text-muted-foreground hover:text-destructive rounded-full p-0.5 hover:bg-muted transition-colors cursor-pointer"
                         >
                           <X size={14} />
@@ -251,8 +253,8 @@ export default function App() {
 
             <div className="flex-1 min-w-0">
               {events.map((event) => (
-                <div 
-                  key={event.id} 
+                <div
+                  key={event.id}
                   style={{ display: activeTab === event.id ? 'block' : 'none' }}
                 >
                   <Card>
