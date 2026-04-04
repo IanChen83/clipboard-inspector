@@ -5,6 +5,7 @@ import { Card, CardContent } from './components/ui/card';
 import { Badge } from './components/ui/badge';
 import { Button } from './components/ui/button';
 import { Switch } from './components/ui/switch';
+import { Input } from './components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from './components/ui/tooltip';
 
 interface ParsedItem {
@@ -156,13 +157,8 @@ export default function App() {
       onDragLeave={handleDragLeave}
     >
       {isDragging && (
-        <div className="absolute inset-0 z-50 bg-primary/10 backdrop-blur-sm border-4 border-primary border-dashed flex items-center justify-center pointer-events-none">
-          <div className="bg-background p-8 rounded-xl shadow-2xl flex flex-col items-center gap-4">
-            <div className="p-4 rounded-full bg-primary/20 text-primary">
-              <Upload size={48} />
-            </div>
-            <h2 className="text-2xl font-bold text-primary">Drop to inspect</h2>
-          </div>
+        <div className="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+          <h2 className="text-4xl font-bold text-white drop-shadow-md">Drop to inspect</h2>
         </div>
       )}
 
@@ -174,13 +170,19 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
+      <main className={`max-w-6xl mx-auto px-4 py-8 flex-1 w-full ${events.length === 0 ? 'flex flex-col items-center justify-center' : ''}`}>
         {events.length === 0 ? (
-          <div className="h-full min-h-[60vh] flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed rounded-xl p-12">
-            <h2 className="text-2xl font-semibold mb-2 text-foreground">Paste or Drop here</h2>
-            <p className="text-center max-w-md">
-              Press <kbd className="px-2 py-1 bg-muted border rounded text-xs font-mono text-foreground">Ctrl+V</kbd> / <kbd className="px-2 py-1 bg-muted border rounded text-xs font-mono text-foreground">⌘V</kbd> anywhere on the page, or drag and drop files to inspect their contents.
+          <div className="flex-1 w-full flex flex-col items-center justify-center text-muted-foreground p-12">
+            <p className="text-center max-w-md mb-6">
+              Paste with <kbd className="px-2 py-1 bg-muted border rounded text-xs font-mono text-foreground">Ctrl+V</kbd> / <kbd className="px-2 py-1 bg-muted border rounded text-xs font-mono text-foreground">⌘V</kbd>, or drop files to inspect the contents.
             </p>
+            <Input 
+              type="text" 
+              placeholder="Or tap here to paste on mobile..." 
+              className="max-w-xs text-center"
+              value=""
+              onChange={() => {}}
+            />
           </div>
         ) : (
           <div className="flex flex-col md:flex-row gap-6">
